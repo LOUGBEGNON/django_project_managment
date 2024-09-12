@@ -1,0 +1,100 @@
+{% extends 'layouts/base-fullscreen.html' %}
+{% load i18n static admin_soft %}
+
+{% block content %}
+
+  {% include 'includes/navigation-home.html' %}
+
+  <main class="main-content  mt-0">
+    <section>
+      <div class="page-header min-vh-75">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-7 d-flex flex-column mx-auto">
+              <div class="card card-plain mt-8">
+                <div class="card-header pb-0 text-left bg-transparent">
+                  <h3 class="font-weight-bolder text-info text-gradient">
+                    Bienvenue sur notre Application de Gestion de Projets !
+                  </h3>
+                  <p class="mb-0">
+                      Gestion et suivi de projet
+                  </p>
+                </div>
+                <div class="card-body">
+                  <div>
+                    <p>Notre application est conçue pour faciliter la gestion et le suivi des projets au sein de votre équipe. Avec des fonctionnalités intuitives et un design convivial, elle vous aide à organiser, planifier et suivre toutes les étapes de vos projets de manière efficace.</p>
+
+                    <h5>Fonctionnalités principales :</h5>
+                    <div class="features">
+                      <ul>
+                        <li>
+                            <strong>Création et gestion de projets :</strong> Ajoutez de nouveaux projets, définissez des objectifs et attribuez des rôles aux membres de votre équipe.
+                        </li>
+                        <li>
+                            <strong>Suivi de l'avancement des tâches :</strong> Suivez l'état des tâches en temps réel avec des statuts tels que "En cours", "Terminé", ou "En attente".
+                        </li>
+                        <li>
+                            <strong>Notifications et rappels :</strong> Recevez des notifications pour les échéances importantes afin de ne jamais manquer un délai.
+                        </li>
+                        <li>
+                            <strong>Visualisation du planning :</strong> Utilisez un diagramme de Gantt pour visualiser la progression et le calendrier de vos projets.
+                        </li>
+                      </ul>
+                    </div>
+                    <br>
+
+                    <h5>Pourquoi utiliser notre application ?</h5>
+                    <p>Notre solution vous permet de mieux collaborer avec votre équipe, de maintenir une vue d'ensemble sur les projets en cours et d'améliorer la productivité grâce à une organisation optimisée. Que vous soyez un chef de projet, un développeur, ou un designer, notre application est l'outil parfait pour vous.</p>
+                  </div>
+                    <div class="text-center">
+                      <a href="{% url 'choice_account' %}">
+                        <button type="button" class="btn bg-gradient-info w-100 mt-1 mb-0">Démarrer</button>
+                      </a>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
+                <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('{% static 'img/curved-images/curved6.jpg' %}')"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+{% endblock content %}
+
+{% block extrascript %}
+    <script type="application/javascript">
+        {% if form.username.errors %}
+            notification.danger("{{ form.username.errors }}", 'top', 'right');
+        {% endif %}
+        {% if form.password.errors %}
+            notification.danger("{{ form.password.errors }}", 'top', 'right');
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            var msg = "You are authenticated as {{ username }}, but are not authorized to " +
+                "access this page.Would you like to login to a different account ?"
+            notification.warning(msg, 'top', 'right');
+        {% endif %}
+
+        {% if form.errors and not form.non_field_errors %}
+            {% if form.errors.items|length == 1 %}
+                notification.warning("{% trans "Please correct the error below." %}", 'top', 'right');
+            {% else %}
+                notification.warning("{% trans "Please correct the errors below." %}", 'top', 'right');
+            {% endif %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                notification.warning("{{ error|clean_text }}", 'top', 'right');
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}

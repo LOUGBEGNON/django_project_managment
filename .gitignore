@@ -1,0 +1,64 @@
+# byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# tests and coverage
+*.pytest_cache
+.coverage
+.testmondata
+.testmondata-shm
+.testmondata-wal
+
+# database & logs
+*.db
+*.sqlite3
+*.log
+logs
+
+# venv
+env
+venv
+
+# other
+.DS_Store
+
+# javascript
+package-lock.json
+
+# staticfiles
+core/staticfiles
+core/staticfiles/assets
+!staticfiles/.gitkeep
+
+#visual studio files
+.vscode/symbols.json
+.vscode/*
+
+core/static/assets/node_modules
+core/static/assets/yarn.lock
+core/static/assets/.temp
+
+.idea/*
+
+# project files to not commit
+core/settings/environments/local.py
+core/settings/environments/preproduction.py
+core/settings/environments/production.py
+tests/test_crypt/number1.encrypted
+media/uploads/*
+media
+
+# env file that could contain sensible info
+.env
+
+celerybeat-schedule
+
+#Temporary IOS files
+Thumbs.db
+
+#Visual Studio Code
+.vscode
+.vscode/settings.json
+
+#Dump files
+dump.rdb
