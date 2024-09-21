@@ -1,9 +1,13 @@
 asgiref==3.8.1
+cffi==1.17.1
+cryptography==43.0.1
 Django==4.2.16
 django-admin-soft-dashboard==1.0.12
 django-phonenumber-field==8.0.0
 django-phonenumbers==1.0.1
 phonenumbers==8.13.45
+pycparser==2.22
+python-dotenv==1.0.1
 pytz==2024.1
 sqlparse==0.5.1
 typing_extensions==4.12.2
