@@ -11,7 +11,7 @@ def index(request):
     print(request.user)
     print("ndfjkbdgvbdjfvjdfnv")
     context = {
-
+      'user': request.user
     }
     return render(request, "dashboard/index.html", context)
 
