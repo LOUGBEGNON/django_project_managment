@@ -1,4 +1,4 @@
-# restaurant_app_django
+# project_managment
 
 ## Description
 Brève description de ce que fait le projet.

@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m0v)b!y!aqux#ob_v0mx!ir11)cpoe)kro2*(i2tknph4n-nxg'
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+PROJECT_MANAGMENT_MASTER_KEY = os.getenv("PROJECT_MANAGMENT_MASTER_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.home',
     'apps.authentication',
+    'apps.dashboard',
 ]
 
 MIDDLEWARE = [
@@ -54,11 +61,18 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = "authentication.User"
 
+AUTHENTICATION_BACKENDS = (
+    "apps.authentication.backends.EmailBackend",
+    "rules.permissions.ObjectPermissionBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 ROOT_URLCONF = 'django_project_managment.urls'
 
 # ROOT_URLCONF = "core.urls"
-LOGIN_REDIRECT_URL = "login"  # Route defined in app/urls.py
+LOGIN_URL = 'login_auth'
+LOGIN_REDIRECT_URL = "login_auth"  # Route defined in app/urls.py
+# LOGIN_REDIRECT_URL = "login"  # Route defined in app/urls.py
 LOGOUT_REDIRECT_URL = "logout"  # Route defined in app/urls.py
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 

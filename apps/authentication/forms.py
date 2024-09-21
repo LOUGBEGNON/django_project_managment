@@ -1,7 +1,67 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm, UsernameField, PasswordResetForm, SetPasswordForm
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from apps.authentication.models import User
 from django.utils.translation import gettext_lazy as _
+
+
+class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "First name",
+                "autocomplete": "first_name",
+                "class": "form-control",
+            }
+        )
+    )
+
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Last name",
+                "autocomplete": "last_name",
+                "class": "form-control",
+            }
+        )
+    )
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Email",
+                "autocomplete": "email",
+                "class": "form-control",
+            }
+        )
+    )
+
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Password",
+                "autocomplete": "new-password",
+                "class": "form-control",
+            }
+        )
+    )
+
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Confirm Password",
+                "autocomplete": "new-password",
+                "class": "form-control",
+            }
+        )
+    )
+
+    # We disable the captcha for the Sign Up form
+    # captcha = CaptchaField(widget=CustomCaptchaTextInput)
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "email", "password1", "password2", )
 
 
 class RegistrationForm(UserCreationForm):
@@ -30,13 +90,37 @@ class RegistrationForm(UserCreationForm):
     }
 
 
-class LoginForm(AuthenticationForm):
-  username = UsernameField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}))
-  password = forms.CharField(
-      label=_("Password"),
-      strip=False,
-      widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}),
-  )
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Email",
+                "autocomplete": "email",
+                "class": "form-control",
+            }
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Password",
+                "autocomplete": "current-password",
+                "class": "form-control",
+            }
+        )
+    )
+    # captcha = CaptchaField(widget=CustomCaptchaTextInput)
+
+
+
+
+# class LoginForm(AuthenticationForm):
+#   username = UsernameField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}))
+#   password = forms.CharField(
+#       label=_("Password"),
+#       strip=False,
+#       widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}),
+#   )
 
 class UserPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={

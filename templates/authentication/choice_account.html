@@ -43,12 +43,12 @@
 
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
                   <p class="mb-4 text-sm mx-auto">
-                    {% url 'admin_password_reset' as password_reset_url %}
-                    {% if password_reset_url %}
-                    <a href="{{ password_reset_url }}" class="text-info text-gradient font-weight-bold">
-                        Forgotten your password or username?
+
+                    Vous disposez déjà d'un compte ?
+                    <a href="{% url 'login' %}" class="text-info text-gradient font-weight-bold">
+                        Se connecter
                     </a>
-                    {% endif %}
+
                   </p>
                 </div>
               </div>

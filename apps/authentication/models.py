@@ -82,7 +82,7 @@ class User(AbstractUser):
     MEMBER = 2
     STAFF = 3
     MANAGER = 4
-    ADMIN = 4
+    ADMIN = 5
     ROLE_CHOICES = (
         (USER, "USER"),
         (MEMBER, "MEMBER"),

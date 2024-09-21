@@ -12,8 +12,6 @@
   <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
     <ul class="navbar-nav">
 
-      {% admin_get_menu as app_list %}
-      {% if app_list %}
           {% for app in app_list %}
               {% if app.has_perms and not app.pinned %}
                 <li class="nav-item">
@@ -48,7 +46,6 @@
                 </li>
               {% endif %}
           {% endfor %}
-      {% endif %}
 
       <li class="nav-item">
 

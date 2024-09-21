@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("apps.home.urls")),  # UI Kits Html files
     path("", include("apps.authentication.urls")),  # UI Kits Html files
+    path("", include("apps.dashboard.urls")),
 ]
