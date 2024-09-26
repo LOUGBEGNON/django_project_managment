@@ -64,10 +64,12 @@ class AddProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
-            "responsible",
+            "name",
+            "description",
             "dead_line",
             "slug",  # only on Update forms
-            "description",
-            "name",
+            "responsible",
+
+
         ]
 
