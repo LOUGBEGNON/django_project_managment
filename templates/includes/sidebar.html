@@ -50,9 +50,9 @@
       <li class="nav-item">
 
         {% if request.user.is_superuser %}
-        <a href="{% url 'admin:index' %}" class="nav-link {% if 'index' in segment %} active {% endif %}">
+        <a href="{% url 'home' %}" class="nav-link {% if 'index' in segment %} active {% endif %}">
         {% else %}
-        <a href="{% url 'index' %}" class="nav-link {% if 'index' in segment %} active {% endif %}">
+        <a href="{% url 'home' %}" class="nav-link {% if 'index' in segment %} active {% endif %}">
         {% endif %}
 
           <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -70,7 +70,7 @@
               </g>
             </svg>
           </div>
-          <span class="nav-link-text ms-1">{% trans 'Dashboard' %}</span>
+          <span class="nav-link-text ms-1">{% trans 'Dashgnhh,gboard' %}</span>
         </a>
       </li>
 

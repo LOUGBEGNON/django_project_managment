@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 PROJECT_MANAGMENT_MASTER_KEY = os.getenv("PROJECT_MANAGMENT_MASTER_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = []
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.home',
     'apps.authentication',
     'apps.dashboard',
+    "bootstrap_datepicker_plus",
 ]
 
 MIDDLEWARE = [
