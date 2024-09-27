@@ -23,11 +23,13 @@ class Project(models.Model):
     description = models.TextField(blank=True)
     slug = models.SlugField('slugproject', blank=True)
     # assign = models.ManyToManyField(User)
-    efforts = models.DurationField()
-    status = models.CharField(max_length=7, choices=STATUS_CHOICE, default=1)
+    # efforts = models.DurationField()
+    status = models.CharField(max_length=7, choices=STATUS_CHOICE, default=STATUS_CHOICE[0])
     dead_line = models.DateField()
-    # company = models.ForeignKey('register.Company', on_delete=models.CASCADE)
-    complete_percentage = models.FloatField(max_length=2, validators = [MinValueValidator(0), MaxValueValidator(100)])
+    author = models.ForeignKey(
+        User, related_name="project_author", on_delete=models.DO_NOTHING
+    )
+    complete_percentage = models.FloatField(max_length=2, validators = [MinValueValidator(0), MaxValueValidator(100)], default=0)
     responsible = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     creation_date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now_add=False, auto_now=True)
@@ -55,6 +57,9 @@ class Task(models.Model):
     due = models.CharField(max_length=7, choices=DUE_CHOICE, default=1)
     current_start_time = models.DateTimeField(null=True)
     responsible = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    author = models.ForeignKey(
+        User, related_name="task_author", on_delete=models.DO_NOTHING
+    )
     total_duration = models.DurationField(
         null=True,
         default=timedelta(seconds=0)
