@@ -15,7 +15,7 @@ import django.contrib.messages as messages
 @login_required(login_url="/login_auth/")
 def index(request):
     print(request.user)
-    projects = Project.objects.all()
+    projects = Project.objects.all().order_by('-creation_date')[:3]
     print(projects)
     print("ndfjkbdgvbdjfvjdfnv")
 
@@ -103,6 +103,14 @@ def view_project(request, id):
         return redirect(
             "404",
         )
+
+
+def projects(request):
+    projects = Project.objects.filter(author=request.user)
+    context = {
+        "projects": projects
+    }
+    return render(request, "dashboard/project/projects.html", context)
 
 
 def billing(request):

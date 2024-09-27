@@ -24,7 +24,7 @@ class Project(models.Model):
     slug = models.SlugField('slugproject', blank=True)
     # assign = models.ManyToManyField(User)
     # efforts = models.DurationField()
-    status = models.CharField(max_length=7, choices=STATUS_CHOICE, default=0)
+    status = models.CharField(max_length=7, choices=STATUS_CHOICE, default=STATUS_CHOICE[0])
     dead_line = models.DateField()
     author = models.ForeignKey(
         User, related_name="project_author", on_delete=models.DO_NOTHING
