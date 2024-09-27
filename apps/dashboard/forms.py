@@ -69,7 +69,5 @@ class AddProjectForm(forms.ModelForm):
             "dead_line",
             "slug",  # only on Update forms
             "responsible",
-
-
         ]
 

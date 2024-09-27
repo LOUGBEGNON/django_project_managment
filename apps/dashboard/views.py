@@ -17,7 +17,6 @@ def index(request):
     print(request.user)
     projects = Project.objects.all().order_by('-creation_date')[:3]
     print(projects)
-    print("ndfjkbdgvbdjfvjdfnv")
 
     if request.method == "POST":
         # Adding forms
@@ -80,6 +79,7 @@ def index(request):
     return render(request, "dashboard/index.html", context)
 
 
+@login_required(login_url="/login_auth/")
 def view_project(request, id):
     try:
         project = Project.objects.get(pk=id)
@@ -98,19 +98,55 @@ def view_project(request, id):
         context = {
             "project": project,
         }
-        return render(request, "dashboard/project/view_project.html", context)
+        return render(request, "dashboard/view_project.html", context)
     except Exception:
         return redirect(
             "404",
         )
 
 
+@login_required(login_url="/login_auth/")
 def projects(request):
     projects = Project.objects.filter(author=request.user)
+    for project in projects:
+        pass
+        # project.author =
+
+    if request.method == "POST":
+        # Adding forms
+        formProject = AddProjectForm(request.POST)
+        if formProject.is_valid():
+            project = formProject.save(commit=False)
+            project.author = request.user
+            project.save()
+            messages.success(
+                request,
+                f'The project "{project.name}" has been successfully published.',
+            )
+            return redirect(
+                reverse(
+                    "view_project",
+                    kwargs={
+                        "id": project.id,
+                    },
+                )
+            )
+            # return redirect(
+            #    "view_community",
+            #    municipality_slug=request.user.individual.municipality_slug,
+            # )
+        else:
+            print(formProject.errors)
+            messages.error(request, "The project form is not valid")
+    else:
+        # Adding forms
+        formProject = AddProjectForm()
+
     context = {
-        "projects": projects
+        "projects": projects,
+        "formProject": formProject,
     }
-    return render(request, "dashboard/project/projects.html", context)
+    return render(request, "dashboard/projects.html", context)
 
 
 def billing(request):
