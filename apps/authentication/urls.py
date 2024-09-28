@@ -17,6 +17,11 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('register/', views.register, name='register'),
     path("register/choice_account/", views.choice_account, name="choice_account"),
+    path(
+        "register/account-activation/<uidb64>/<token>",
+        views.activate,
+        name="activate",
+    ),
     path('accounts/password-change/', views.UserPasswordChangeView.as_view(), name='password_change'),
     path('accounts/password-change-done/', auth_views.PasswordChangeDoneView.as_view(
         template_name='accounts/password_change_done.html'

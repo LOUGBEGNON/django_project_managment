@@ -1,0 +1,16 @@
+{% autoescape off %}
+Welcome {{ username }}!
+
+You are one click away to activate your account into the Project Management.
+
+Please click on the link below to confirm your registration,
+{{ scheme }}://{{ domain }}{{ url }}
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.
+
+If you receive a message "this activation link is already expired or not valid", it means that the registration has been already confirmed, you can thus proceed to log in directly here {{ scheme }}://{{ domain }}
+
+Besity - Diversity and Inclusion Ecosystem
+
+------------------------------------------
+{% endautoescape %}

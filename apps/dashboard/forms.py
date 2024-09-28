@@ -1,7 +1,7 @@
 
 from django import forms
 from .models import (
-    Project,
+    Project, Task,
 )
 from apps.authentication.models import *
 from bootstrap_datepicker_plus.widgets import DateTimePickerInput
@@ -64,10 +64,55 @@ class AddProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = [
-            "responsible",
+            "name",
+            "description",
             "dead_line",
             "slug",  # only on Update forms
-            "description",
+            "responsible",
+        ]
+
+
+class AddTaskForm(forms.ModelForm):
+    """ """
+
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "add task",
+                "autocomplete": "name",
+            },
+        )
+    )
+
+    description = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Project description",
+                "autocomplete": "description",
+            },
+        )
+    )
+
+    responsible = forms.ModelChoiceField(
+        required=False,
+        queryset=User.objects.exclude(role__in=[1, 5]),
+        empty_label="Task Responsible",
+    )
+
+    assign = forms.ModelChoiceField(
+        required=False,
+        queryset=User.objects.exclude(role__in=[1, 5]),
+        empty_label="Task assign",
+    )
+
+    class Meta:
+        model = Task
+        fields = [
             "name",
+            "description",
+            "assign",
+            "responsible",
         ]
 

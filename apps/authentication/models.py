@@ -122,6 +122,10 @@ class User(AbstractUser):
         self.save()
         return self
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     # def is_member_of(self, municipality_slug):
     #     """Check if user is part of a given municipality's community"""
     #     try:
