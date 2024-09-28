@@ -84,6 +84,24 @@ def index(request):
 def view_project(request, id):
     try:
         project = Project.objects.get(pk=id)
+
+        STATUS_CHOICE = (
+            (0, 'CREATED'),
+            (1, 'IN PROGRESS'),
+            (2, "PAUSED"),
+            (3, "COMPLETED")
+        )
+
+        if project.status == '0':
+            project.status = 'CREATED'
+        if project.status == '1':
+            project.status = 'IN PROGRESS'
+        if project.status == '2':
+            project.status = "PAUSED"
+        if project.status == '3':
+            project.status = "COMPLETED"
+
+
         tasks = Task.objects.filter(project=project)
         print(tasks)
         print(project)

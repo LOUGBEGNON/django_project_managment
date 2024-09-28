@@ -20,7 +20,8 @@
                 {{project.name|safe}}
               </h5>
               <p class="mb-0 font-weight-bold text-sm">
-                {{project.description|safe}}
+                 {{ project.description|slice:":50" }}...
+
               </p>
             </div>
           </div>
@@ -161,41 +162,34 @@
             </div>
             <div class="card-body p-3">
               <p class="text-sm">
-                {{ project.description|slice:":20" }}...
+                {{project.description|safe}}
               </p>
               <hr class="horizontal gray-light xmy-4">
               <ul class="list-group">
-                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Author:</strong>  <p class="text-sm">
-                {{ project.name }}
-              </p></li>
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Date:</strong>
-                  <p class="text-sm">
-                {{ project.creation_date }}
-              </p></li>
+                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Author: </strong>{{ project.author.full_name }}
+                </li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Date:  </strong> {{ project.creation_date }}
+                 </li>
 
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Last Update:</strong>
-                  <p class="text-sm">
-                {{ project.update_date }}
-                    </p>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Last Update: </strong> {{ project.update_date }}
+
                 </li>
 
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Status:</strong>
-                  <p class="text-sm">
-                {{ project.status }}
-              </p></li>
-
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Status: </strong> {{ project.status }}
                 </li>
               </ul>
             </div>
           </div>
         </div>
+
+
           <div class="col-12 col-xl-4">
             <div class="card h-100">
               <div class="card-header pb-0 p-3">
-                <h6 class="mb-0">Conversations</h6>
+                <h6 class="mb-0">Task</h6>
               </div>
               <div class="card-body p-3">
-                <ul class="list-group">
+                <ul class="list-group" style="height: 400px !important; overflow: auto;">
                   {% for task in tasks %}
                   <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
                     <div class="avatar me-3">
@@ -205,7 +199,9 @@
                       <h6 class="mb-0 text-sm">{{ task.name }}</h6>
                       <p class="mb-0 text-xs">{{ task.name }}</p>
                     </div>
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;">Reply</a>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;">View</a>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;">Start</a>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;">Stop</a>
                   </li>
                   {% empty %}
 
