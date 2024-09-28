@@ -179,8 +179,18 @@ def vr(request):
 def rtl(request):
   return render(request, 'dashboard/rtl.html', { 'segment': 'rtl' })
 
+@login_required(login_url="/login_auth/")
 def profile(request):
-  print(request.user.username)
-  return render(request, 'dashboard/profile.html', { 'segment': 'profile' })
+    if request.user.role == 1:
+        request.user.role = 'USER'
+    elif request.user.role == 2:
+        request.user.role = 'MEMBER'
+    elif request.user.role == 3:
+        request.user.role = 'STAFF'
+    elif request.user.role == 4:
+        request.user.role = 'MANAGER' 
+    elif request.user.role == 5:
+        request.user.role = 'ADMIN' 
+    return render(request, 'dashboard/profile.html', { 'segment': 'profile' })
 
 

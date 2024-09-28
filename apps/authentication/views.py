@@ -284,7 +284,7 @@ def verify_email(user, request):
 
 def logout_view(request):
   logout(request)
-  return redirect('/accounts/login/')
+  return redirect('/login/')
 
 class UserPasswordResetView(PasswordResetView):
   template_name = 'accounts/password_reset.html'
