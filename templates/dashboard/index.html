@@ -121,7 +121,7 @@
                         </h5>
                       </a>
                       <p class="mb-4 text-sm">
-                        {{project.description|truncatechars:20}}
+                        {{project.description|truncatechars:20|safe}}
                       </p>
                       <div class="d-flex align-items-center justify-content-between">
                         <a href="{% url 'view_project' project.id %}">
