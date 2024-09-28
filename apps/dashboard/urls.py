@@ -12,6 +12,8 @@ urlpatterns = [
     # The home page(s)
     # path("", views.index, name="default_home"),
     path("dashboard/", views.index, name="home"),
+    path("dashboard/view_project/<int:id>/", views.view_project, name="view_project"),
+    path("dashboard/projects/", views.projects, name="projects"),
     path('billing/', views.billing, name='billing'),
     path('tables/', views.tables, name='tables'),
     path('vr/', views.vr, name='vr'),

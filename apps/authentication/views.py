@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView, PasswordResetView, PasswordChan
 from apps.authentication.forms import RegistrationForm, LoginForm, UserPasswordResetForm, UserSetPasswordForm, \
   UserPasswordChangeForm, RegisterForm
 from django.contrib.auth import logout, login, update_session_auth_hash
-from apps.authentication.backends import EmailAndSMSBackend, EmailBackend
+from apps.authentication.backends import EmailBackend
 import django.contrib.messages as messages
 from django.conf import settings
 
@@ -49,8 +49,6 @@ def login_view(request):
     """Login page, only an anonymous user.
     Already logged-in users that are also Individual get redirected to the right page.
     """
-
-    print("je suis ici")
 
     if hasattr(request.user, "individual") and request.user.is_authenticated:
       return redirect(
@@ -138,6 +136,9 @@ def choice_account(request):
 
 
 def register(request):
+  msg = None
+  success = False
+
   if "type_account" in request.GET:
     type_account = request.GET.get("type_account")
   else:
@@ -174,7 +175,11 @@ def register(request):
   else:
     form = RegisterForm()
 
-  context = { 'form': form }
+  context = {
+    'form': form,
+    "msg": msg,
+    "success": success
+  }
   # return render(request, 'accounts/register.html', context)
   return render(request, 'authentication/register.html', context)
 

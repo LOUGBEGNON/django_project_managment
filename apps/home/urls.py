@@ -13,6 +13,7 @@ urlpatterns = [
     # path("", views.index, name="default_home"),
     path("", views.index, name="index"),
     path("home/", views.index, name="default_home"),
+    path("404/", views.error_404, name="404"),
     path("login/", views.index, name="default_home"),
 ]
 
