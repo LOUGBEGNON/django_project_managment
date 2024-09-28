@@ -180,6 +180,7 @@ def rtl(request):
   return render(request, 'dashboard/rtl.html', { 'segment': 'rtl' })
 
 def profile(request):
+  print(request.user.username)
   return render(request, 'dashboard/profile.html', { 'segment': 'profile' })
 
 
