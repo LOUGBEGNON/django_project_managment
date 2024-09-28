@@ -3,8 +3,96 @@
 
 {% block content %}
 <div class="container-fluid py-4">
+
   <div class="row">
-    <div class="col-12">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                        New project
+                      </button>
+
+                {% include 'dashboard/modal/project_addform_modal.html' %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Today's Users</p>
+                <h5 class="font-weight-bolder mb-0">
+                  2,300
+                  <span class="text-success text-sm font-weight-bolder">+3%</span>
+                </h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">New Clients</p>
+                <h5 class="font-weight-bolder mb-0">
+                  +3,462
+                  <span class="text-danger text-sm font-weight-bolder">-2%</span>
+                </h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="row">
+            <div class="col-8">
+              <div class="numbers">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Sales</p>
+                <h5 class="font-weight-bolder mb-0">
+                  $103,430
+                  <span class="text-success text-sm font-weight-bolder">+5%</span>
+                </h5>
+              </div>
+            </div>
+            <div class="col-4 text-end">
+              <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 mt-4">
       <div class="card mb-4">
         <div class="card-header pb-0">
           <h6>Authors table</h6>
@@ -209,8 +297,11 @@
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Budget</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Author</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Responsible</th>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Creation date</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last update date</th>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Completion</th>
                   <th></th>
                 </tr>
@@ -221,18 +312,43 @@
                   <td>
                     <div class="d-flex px-2">
                       <div>
-                        <img src="{% static 'img/small-logos/logo-spotify.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="spotify">
+                        <img src="{% static 'img/small-logos/logo-jira.svg' %}" class="avatar avatar-sm rounded-circle me-2" alt="jira">
                       </div>
                       <div class="my-auto">
-                        <h6 class="mb-0 text-sm">{{ project.name}}</h6>
+                        <h6 class="mb-0 text-sm">{{ project.name|truncatechars:10|safe }}</h6>
                       </div>
                     </div>
                   </td>
                   <td>
-                    <p class="text-sm font-weight-bold mb-0">$2,500</p>
+                    <div class="d-flex px-2 py-1">
+                      <div>
+                        <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3" alt="user6">
+                      </div>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">{{project.author.full_name}}</h6>
+                        <p class="text-xs text-secondary mb-0">{{project.author.email}}</p>
+                      </div>
+                    </div>
                   </td>
                   <td>
+                    <div class="d-flex px-2 py-1">
+                      <div>
+                        <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3" alt="user6">
+                      </div>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">{{project.responsible.full_name}}</h6>
+                        <p class="text-xs text-secondary mb-0">{{project.responsible.email}}</p>
+                      </div>
+                    </div>
+                  </td>
+                    <td>
                     <span class="text-xs font-weight-bold">working</span>
+                  </td>
+                  <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ project.creation_date }}</span>
+                  </td>
+                  <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">{{ project.update_date }}</span>
                   </td>
                   <td class="align-middle text-center">
                     <div class="d-flex align-items-center justify-content-center">
@@ -251,7 +367,7 @@
                   </td>
                 </tr>
                 {% empty %}
-
+                <p>No project to show</p>
                 {% endfor %}
 
                 <tr>

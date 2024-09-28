@@ -1,22 +1,24 @@
-from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 import logging
-
-# Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordChangeView, PasswordResetConfirmView
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str as force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from apps.authentication.forms import RegistrationForm, LoginForm, UserPasswordResetForm, UserSetPasswordForm, \
   UserPasswordChangeForm, RegisterForm
-from django.contrib.auth import logout, login, update_session_auth_hash
+from django.contrib.auth import logout, login, update_session_auth_hash, get_user_model
 from apps.authentication.backends import EmailBackend
 import django.contrib.messages as messages
 from django.conf import settings
-
+from apps.authentication.models import User
+from apps.authentication.tokens import account_activation_token
 from apps.utils import generate_username
 
 logger = logging.getLogger("django")
 
-
-# Create your views here.
 
 # Pages
 def index(request):
@@ -169,7 +171,33 @@ def register(request):
       print('Account created successfully!')
       logger.info(f"User model {user.id} saved")
 
-      return redirect('/login_auth/')
+      login(request, user, backend="apps.authentication.backends.EmailBackend")
+
+      # Send verification mail. Handle any exception that could occur.
+      try:
+        verify_email(user, request)
+        logger.info(f"Send verification email for {user.username}")
+        logger.info(f"Send New User {user.username} notification to Project...")
+
+        send_mail(
+          user.username + " registered to Project",
+          "A new user ("
+          + user.username
+          + ") with email "
+          + " has registered to Project Managemant",
+          "amedeelougbegnon3@gmail.com",
+          ['lougbegnona@gmail.com'],
+          fail_silently=False,
+        )
+
+        return redirect('/login_auth/')
+      except Exception as e:
+        print(e)
+        msg = settings.ERROR_COULD_NOT_SEND_VERIF_EMAIL
+        messages.error(request, msg)
+        logger.error(f"Error sending the verification message: {e}")
+
+
     else:
       print("Register failed!")
   else:
@@ -183,9 +211,80 @@ def register(request):
   # return render(request, 'accounts/register.html', context)
   return render(request, 'authentication/register.html', context)
 
+def activate(request, uidb64, token):
+    response = None
+    try:
+      uid = force_text(urlsafe_base64_decode(uidb64))
+      user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+      user = None
+    if user is not None and account_activation_token.check_token(user, token):
+      user.is_active = True
+      user.save()
+      response = "Thank you for confirming your email. Your account has been activated."
+    return render(
+      request,
+      "authentication/account_activation_status.html",
+      {"response": response},
+    )
+
+
+def verify_email(user, request):
+    """Send verification mail"""
+    # from apps.authentication.views.utils import get_site_scheme_and_domain
+
+    site_domain = get_current_site(request)
+
+    from_email = (
+            "Project Management <" + "amedeelougbegnon3@gmail.com" + ">"
+    )
+    mail_subject = "Account Registration Confirmation"
+    to_email = user.email
+
+    msge = render_to_string(
+      "authentication/acc_active_email.txt",
+      {
+        "username": user.username,
+        "url": reverse(
+          "activate",
+          kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": account_activation_token.make_token(user),
+          },
+        ),
+        "domain": site_domain,
+        "scheme": "http",
+      },
+    )
+
+    msge_html = render_to_string(
+      "authentication/acc_active_email.html",
+      {
+        "username": user.username,
+        "url": reverse(
+          "activate",
+          kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": account_activation_token.make_token(user),
+          },
+        ),
+        "domain": site_domain,
+        "scheme": "http",
+      },
+    )
+    send_mail(
+      mail_subject,
+      msge,
+      from_email,
+      [to_email],
+      fail_silently=False,
+      html_message=msge_html,
+    )
+
+
 def logout_view(request):
   logout(request)
-  return redirect('/accounts/login/')
+  return redirect('/login/')
 
 class UserPasswordResetView(PasswordResetView):
   template_name = 'accounts/password_reset.html'
@@ -198,3 +297,5 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 class UserPasswordChangeView(PasswordChangeView):
   template_name = 'accounts/password_change.html'
   form_class = UserPasswordChangeForm
+
+

@@ -50,6 +50,20 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"
+# EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "7cf003001@smtp-brevo.com"
+# EMAIL_HOST_USER = "layfernand@gmail.com"
+EMAIL_HOST_PASSWORD = "pSTXvELBzqR49NFH"
+# EMAIL_HOST_PASSWORD = "Inform@tique310301!"
+EMAIL_PORT = 587
+# EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = True
+# EMAIL_USE_SSL = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
