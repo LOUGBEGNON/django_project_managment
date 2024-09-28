@@ -3,6 +3,7 @@ from apps.authentication.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 
 STATUS_CHOICE = (
     (0, 'CREATED'),
@@ -50,7 +51,7 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         related_name="tasks"
     )
-    # assign = models.ManyToManyField(User)
+    assign = models.ManyToManyField(User, related_name="assign_tasks")
     name = models.CharField(max_length=80)
     description = models.TextField(blank=True)
     status = models.CharField(max_length=7, choices=STATUS_CHOICE, default=0)
@@ -68,6 +69,32 @@ class Task(models.Model):
         "self",
         symmetrical=False,
         related_name="subsequent_tasks"
+    )
+
+    creation_date = models.DateTimeField(
+        _("creation date"),
+        blank=True,
+        db_index=True,
+        default=timezone.now,
+        help_text=_("Creation date, by default it is now."),)
+    update_date = models.DateField(_
+        ("update date"),
+        blank=True,
+        db_index=True,
+        default=timezone.now,
+        help_text=_("Update date, by default it is now."),)
+    start_date = models.DateField(
+        ("start date"),
+        blank=True,
+        db_index=True,
+        default=timezone.now,
+        help_text=_("Start date, by default it is now."),)
+    end_date = models.DateField(
+        _("end date"),
+        blank=True,
+        db_index=True,
+        default=timezone.now,
+        help_text=_("End date, by default it is now."),
     )
 
     class Meta:

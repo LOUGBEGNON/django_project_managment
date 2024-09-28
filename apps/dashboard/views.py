@@ -1,5 +1,6 @@
 from lib2to3.fixes.fix_input import context
 
+from django.db.transaction import commit
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -83,23 +84,40 @@ def index(request):
 def view_project(request, id):
     try:
         project = Project.objects.get(pk=id)
+        tasks = Task.objects.filter(project=project)
+        print(tasks)
         print(project)
         print(project.description)
 
-        # if (post.user != request.user) and (
-        #     post.status is not settings.PUBLISHED_STATUS
-        # ):
-        #     messages.error(request, "You are not allowed to view this post")
-        #     return redirect(
-        #         "view_community",
-        #         municipality_slug=request.user.individual.municipality_slug,
-        #     )
+        if request.method == "POST":
+            form = AddTaskForm(request.POST)
+            if form.is_valid():
+                task = form.save(commit=False)
+                task.project = project
+                task.author = request.user
+                task.save()
+                return redirect(
+                    reverse(
+                        "view_project",
+                        kwargs={
+                            "id": project.id,
+                        },
+                    )
+                )
+
+            else:
+                print(form.errors)
+        else:
+            form = AddTaskForm()
 
         context = {
             "project": project,
+            "form": form,
+            "tasks": tasks,
         }
         return render(request, "dashboard/view_project.html", context)
-    except Exception:
+    except Exception as e:
+        print(e)
         return redirect(
             "404",
         )
