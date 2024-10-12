@@ -12,7 +12,6 @@ STATUS_CHOICE = (
     (3, "COMPLETED")
 )
 
-
 DUE_CHOICE = (
     (1, 'On Due'),
     (2, 'Overdue'),
@@ -49,7 +48,7 @@ class Task(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name="tasks"
+        related_name="project"
     )
     assign = models.ManyToManyField(User, related_name="assign_tasks")
     name = models.CharField(max_length=80)
@@ -70,7 +69,6 @@ class Task(models.Model):
         symmetrical=False,
         related_name="subsequent_tasks"
     )
-
     creation_date = models.DateTimeField(
         _("creation date"),
         blank=True,
@@ -112,6 +110,8 @@ class Task(models.Model):
 
     @property
     def is_in_progress(self):
+        print(type(self.status))
+        print(type('1'))
         return self.status == '1'
 
     @property

@@ -276,7 +276,7 @@ def verify_email(user, request):
       mail_subject,
       msge,
       from_email,
-      [to_email],
+      [to_email, ],
       fail_silently=False,
       html_message=msge_html,
     )

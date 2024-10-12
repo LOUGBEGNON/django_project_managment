@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AnyChart Gantt Chart</title>
+    <script src="https://cdn.anychart.com/releases/8.10.0/js/anychart-bundle.min.js"></script>
+</head>
+<body>
+    <h1>Gantt Chart for Project Tasks</h1>
+    <div id="ganttContainer" style="width: 100%; height: 600px;"></div>
+
+    <script>
+        anychart.onDocumentReady(function () {
+            // Sample task data from Django
+            var tasks = {{ task_data|safe }};
+
+            // Map task data to AnyChart format
+            var chartData = tasks.map(function(task) {
+                return {
+                    id: task.name,
+                    name: task.name,
+                    actualStart: task.start,
+                    actualEnd: task.end
+                };
+            });
+
+            // Create Gantt chart
+            var chart = anychart.ganttProject();
+            chart.data(chartData);
+
+            // Set container for the chart
+            chart.container("ganttContainer");
+            chart.draw();
+        });
+    </script>
+</body>
+</html>

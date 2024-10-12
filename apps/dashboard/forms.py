@@ -4,7 +4,7 @@ from .models import (
     Project, Task,
 )
 from apps.authentication.models import *
-from bootstrap_datepicker_plus.widgets import DateTimePickerInput
+from bootstrap_datepicker_plus.widgets import DateTimePickerInput, DatePickerInput
 
 
 # class XDSoftDateTimePickerInput(forms.DateTimeInput):
@@ -44,9 +44,9 @@ class AddProjectForm(forms.ModelForm):
         ),
     )
 
-    dead_line = forms.DateTimeField(
+    dead_line = forms.DateField(
         input_formats=["%d/%m/%Y"],
-        widget=DateTimePickerInput(
+        widget=DatePickerInput(
             attrs={
                 "class": "form-control",
                 "placeholder": "dd/mm/yyyy",
@@ -107,11 +107,35 @@ class AddTaskForm(forms.ModelForm):
         empty_label="Task assign",
     )
 
+    start_date = forms.DateTimeField(
+        input_formats=["%d/%m/%Y"],
+        widget=DateTimePickerInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "dd/mm/yyyy",
+                "name": "start_date",
+            }
+        ),
+    )
+
+    end_date = forms.DateTimeField(
+        input_formats=["%d/%m/%Y"],
+        widget=DateTimePickerInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "dd/mm/yyyy",
+                "name": "end_date",
+            }
+        ),
+    )
+
     class Meta:
         model = Task
         fields = [
             "name",
             "description",
+            "start_date",
+            "end_date",
             "assign",
             "responsible",
         ]
