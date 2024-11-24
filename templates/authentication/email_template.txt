@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hi {{ username }},
+
+To initiate the password reset process for your account, please
+click on the link below:
+{{ scheme }}://{{ domain }}{{ url }}
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser window instead.
+
+Besity - Diversity and Inclusion Ecosystem
+{% endautoescape %}

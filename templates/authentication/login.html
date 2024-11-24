@@ -5,6 +5,8 @@
 
   {% include 'includes/navigation-home.html' %}
 
+
+
   <main class="main-content  mt-0">
     <section>
       <div class="page-header min-vh-75">
@@ -25,7 +27,7 @@
                   </p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="post" action="#">
+                  <form role="form" method="post" action="">
                     {% if form.non_field_errors %}
                       {% for error in form.non_field_errors %}
                         <span class="text-danger">{{ error }}</span>
@@ -64,6 +66,10 @@
       </div>
     </section>
   </main>
+
+ {% include 'includes/messages.html' %}
+
+
 
 
 {% endblock content %}

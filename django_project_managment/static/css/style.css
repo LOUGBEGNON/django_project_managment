@@ -1,0 +1,18 @@
+.alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: auto;
+  z-index: 9999;
+}
+
+.alert {
+  opacity: 0.9; /* Ajoute un peu de transparence si vous le souhaitez */
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+}
+
+

@@ -10,7 +10,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>
-      Soft UI Dashboard - {% block title %}{% endblock %}
+      Project Management - {% block title %}{% endblock %}
     </title>
 
     <!-- Favicon -->
@@ -30,6 +30,7 @@
     <link href="{% static 'css/nucleo-svg.css' %}" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="{% static 'css/soft-ui-dashboard.css' %}" rel="stylesheet" />
+    <link id="pagestyle_style" href="{% static 'css/style.css' %}" rel="stylesheet" />
     <link id="pagestyle_dark" href="{% static 'css/dark-theme-core.css' %}" rel="stylesheet" />
 
     {% block extrahead %}{% endblock extrahead %}
@@ -41,8 +42,10 @@
 
     {% include "includes/sidebar.html" %}
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        {% include "includes/navigation.html" %} 
-        {% block content %}{% endblock content %}
+        {% include "includes/navigation.html" %}
+        {% block content %}
+
+        {% endblock content %}
     </main>
 
     <!-- APP Configurator -->

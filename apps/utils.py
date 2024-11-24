@@ -1,6 +1,19 @@
 import random
 import string
+from django.utils.text import slugify
 
+def generate_slug(name, max_length=50):
+    """
+    Génère un slug basé sur le nom fourni et limite sa longueur.
+
+    :param name: Le nom à convertir en slug.
+    :param max_length: La longueur maximale du slug.
+    :return: Un slug formaté et tronqué si nécessaire.
+    """
+    slug = slugify(name)
+    if len(slug) > max_length:
+        slug = slug[:max_length].rstrip('-')  # Tronquer et enlever les tirets de fin
+    return slug
 
 def remove_html_tags(text):
     """Remove html tags from a string"""

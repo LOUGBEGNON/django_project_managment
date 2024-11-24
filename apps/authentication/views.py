@@ -7,14 +7,15 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str as force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from apps.authentication.forms import RegistrationForm, LoginForm, UserPasswordResetForm, UserSetPasswordForm, \
-  UserPasswordChangeForm, RegisterForm
+from apps.authentication.forms import LoginForm, UserPasswordResetForm, UserSetPasswordForm, \
+  UserPasswordChangeForm, RegisterForm, UserForgotPasswordForm
 from django.contrib.auth import logout, login, update_session_auth_hash, get_user_model
 from apps.authentication.backends import EmailBackend
 import django.contrib.messages as messages
 from django.conf import settings
 from apps.authentication.models import User
-from apps.authentication.tokens import account_activation_token
+from apps.authentication.tokens import account_activation_token, reset_activation_token
+from apps.dashboard.models import Company
 from apps.utils import generate_username
 
 logger = logging.getLogger("django")
@@ -63,9 +64,6 @@ def login_view(request):
     if form.is_valid():
       email = form.cleaned_data.get("email")
       password = form.cleaned_data.get("password")
-      print(email)
-      print(password)
-
       email_backend = EmailBackend()
       user = email_backend.authenticate(request, username=email, password=password)
 
@@ -115,6 +113,7 @@ def login_view(request):
           # else:
           #   return redirect("register_individual")
           print("Je suis bien connecté et je suis redirigé")
+          messages.success(request, 'You are now logged in.')
           return redirect("home")
         else:
           msg = "Please confirm your email before logging in."
@@ -144,7 +143,7 @@ def register(request):
   if "type_account" in request.GET:
     type_account = request.GET.get("type_account")
   else:
-    type_account = "user"
+    type_account = "member"
 
   print(type_account)
 
@@ -166,6 +165,11 @@ def register(request):
         user.role = user.MANAGER
 
       user.username = generate_username(to_email)
+
+      if "company" in request.session:
+        company = Company.objects.get(pk=request.session["company"])
+        user.company = company
+        user.is_admin = False
 
       user.save()
       print('Account created successfully!')
@@ -189,6 +193,8 @@ def register(request):
           ['lougbegnona@gmail.com'],
           fail_silently=False,
         )
+
+        messages.success(request, 'Your account has been  registered successfully!')
 
         return redirect('/login_auth/')
       except Exception as e:
@@ -222,6 +228,7 @@ def activate(request, uidb64, token):
       user.is_active = True
       user.save()
       response = "Thank you for confirming your email. Your account has been activated."
+      messages.success(request, "Thank you for confirming your email. Your account has been activated.")
     return render(
       request,
       "authentication/account_activation_status.html",
@@ -231,13 +238,8 @@ def activate(request, uidb64, token):
 
 def verify_email(user, request):
     """Send verification mail"""
-    # from apps.authentication.views.utils import get_site_scheme_and_domain
-
     site_domain = get_current_site(request)
-
-    from_email = (
-            "Project Management <" + "amedeelougbegnon3@gmail.com" + ">"
-    )
+    from_email = settings.DEFAULT_FROM_EMAIL
     mail_subject = "Account Registration Confirmation"
     to_email = user.email
 
@@ -282,9 +284,258 @@ def verify_email(user, request):
     )
 
 
+def reset_link(request, uidb64, token):
+  if request.method == "POST":
+    try:
+      uid = force_text(urlsafe_base64_decode(uidb64))
+      user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+      messages.add_message(request, messages.ERROR, str(e))
+      user = None
+
+    if user is not None and reset_activation_token.check_token(user, token):
+      form = UserPasswordResetForm(user=user, data=request.POST)
+      if form.is_valid():
+        form.save()
+        update_session_auth_hash(request, form.user)
+
+        user.is_active = True
+        user.save()
+        messages.success(request, "Password reset successfully.")
+        return render(
+          request,
+          "authentication/password_reset_complete.html",
+        )
+      else:
+        context = {"form": form, "uid": uidb64, "token": token}
+        messages.error(request, "Password could not be reset.")
+        return render(
+          request,
+          "authentication/password_reset_confirm.html",
+          context,
+        )
+    else:
+      messages.error(request, "Password reset link is invalid.")
+      messages.error(request, "Please request a new password reset.")
+
+  try:
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    user = get_user_model().objects.get(pk=uid)
+  except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+    messages.add_message(request, messages.ERROR, str(e))
+    user = None
+
+  if user is not None and reset_activation_token.check_token(user, token):
+    context = {"form": UserPasswordResetForm(user), "uid": uidb64, "token": token}
+    return render(
+      request, "authentication/reset_password/reset_request_confirm.html", context
+    )
+  else:
+    messages.add_message(request, messages.ERROR, "Password reset link is invalid.")
+    messages.add_message(
+      request, messages.ERROR, "Please request a new password reset."
+    )
+
+  return redirect("home", municipality_slug=request.user.individual.municipality_slug)
+
+
 def logout_view(request):
   logout(request)
+  messages.success(request, "You are successfully logout")
   return redirect('/login/')
+
+
+def password_reset(request):
+  """User forgot password form view."""
+
+  site_scheme = "http"
+  site_domain = get_current_site(request)
+  msg = ""
+  if request.method == "POST":
+    form = UserForgotPasswordForm(request.POST)
+
+    # see in which case we are (forgot password or just changing one's password)
+    anon = True if request.user.is_anonymous else False
+
+    if form.is_valid():
+      email = request.POST.get("email")
+      if not anon:
+        # in this case, the email submitted must match the user's email
+        the_user_email = request.user.email
+        if not (email == the_user_email):
+          messages.add_message(
+            request,
+            messages.ERROR,
+            "The email address you submitted does not match your email. Please check the email address associated to your account and try again.",
+          )
+          return render(
+            request,
+            "authentication/reset_password/reset_form.html",
+            {"form": form},
+          )
+
+      user = list(get_user_model().objects.filter(email=email))
+      print(user)
+
+      if len(user) > 0:
+        user = user[0]
+        user = User.objects.get(pk=user.id)
+        print(user)
+        if not anon:
+          logout(request)
+
+        mail_subject = "Reset Password confirmation"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        to_email = email
+        message = render_to_string(
+          "authentication/email_template.txt",
+          {
+            "username": user.username,
+            "url": reverse(
+              'reset_link',
+              kwargs= {
+                "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user),
+              }
+            ),
+            "scheme": site_scheme,
+            "domain": site_domain,
+          },
+        )
+
+        message_html = render_to_string(
+          "authentication/email_template.html",
+          {
+            "username": user.username,
+            "url": reverse(
+              'reset_link',
+              kwargs={
+                "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user),
+              }
+            ),
+            "scheme": site_scheme,
+            "domain": site_domain,
+          },
+        )
+
+        # print(from_email, to_email, message, message_html)
+
+        send_mail(
+          mail_subject,
+          message,
+          from_email,
+          [to_email],
+          fail_silently=False,
+          html_message=message_html,
+        )
+
+        messages.add_message(
+          request,
+          messages.SUCCESS,
+          "Projet Management sent you an email to {0}.".format(email),
+        )
+        # msg = "If this mail address is known to us, an email will be sent to your account."
+        return render(
+          request,
+          "authentication/password_reset_confirm.html",
+          {"email": email},
+        )
+      else:
+        messages.error(
+          request,
+          "The email address you submitted is not registered. Please check the email address associated to your account and try again.",
+        )
+        return render(
+          request,
+          "authentication/password_reset.html",
+          {"form": form},
+        )
+    else:
+      messages.add_message(
+        request,
+        messages.ERROR,
+        "The captcha answer is mispelled. Please try again.",
+      )
+      return render(
+        request, "authentication/password_reset.html", {"form": form}
+      )
+
+  context = {
+    "form": UserForgotPasswordForm,
+    "msg": msg
+  }
+
+  return render(
+    request,
+    "authentication/password_reset.html", context
+  )
+
+
+def reset_link(request, uidb64, token):
+  if request.method == "POST":
+    try:
+      uid = force_text(urlsafe_base64_decode(uidb64))
+      user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+      messages.add_message(request, messages.ERROR, str(e))
+      user = None
+
+    if user is not None and reset_activation_token.check_token(user, token):
+      form = UserPasswordResetForm(user=user, data=request.POST)
+      if form.is_valid():
+        form.save()
+        update_session_auth_hash(request, form.user)
+
+        user.is_active = True
+        user.save()
+        messages.add_message(
+          request, messages.SUCCESS, "Password reset successfully."
+        )
+        return render(
+          request,
+          "authentication/password_reset_complete.html",
+        )
+      else:
+        context = {"form": form, "uid": uidb64, "token": token}
+        messages.add_message(
+          request, messages.ERROR, "Password could not be reset."
+        )
+        return render(
+          request,
+          "authentication/password_reset_confirm.html",
+          context,
+        )
+    else:
+      messages.add_message(
+        request, messages.ERROR, "Password reset link is invalid."
+      )
+      messages.add_message(
+        request, messages.ERROR, "Please request a new password reset."
+      )
+
+  try:
+    uid = force_text(urlsafe_base64_decode(uidb64))
+    user = get_user_model().objects.get(pk=uid)
+  except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+    messages.add_message(request, messages.ERROR, str(e))
+    user = None
+
+  if user is not None and reset_activation_token.check_token(user, token):
+    print(user)
+    context = {"form": UserPasswordResetForm(user), "uid": uidb64, "token": token}
+    return render(
+      request, "authentication/password_reset_confirm.html", context
+    )
+  else:
+    messages.add_message(request, messages.ERROR, "Password reset link is invalid.")
+    messages.add_message(
+      request, messages.ERROR, "Please request a new password reset."
+    )
+
+  return redirect("home", municipality_slug=request.user.individual.municipality_slug)
+
+
 
 class UserPasswordResetView(PasswordResetView):
   template_name = 'accounts/password_reset.html'

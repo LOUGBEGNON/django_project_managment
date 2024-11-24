@@ -5,9 +5,9 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-        <li class="text-sm text-dark active ms-2" aria-current="page">
-          {% if request.path == '/' %} / Dashboard {% else %} {{ request.path|title }} {% endif %}
-        </li>
+<!--        <li class="text-sm text-dark active ms-2" aria-current="page">-->
+<!--          {% if request.path == '/' %} / Dashboard {% else %} {{ request.path|title }} {% endif %}-->
+<!--        </li>-->
       </ol>
     </nav>
     <!--<div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
@@ -18,18 +18,21 @@
         </div>
       </div>-->
       <ul class="navbar-nav  justify-content-end">
-
-        {% if request.user.is_authenticated %}
+          {% if request.user.is_authenticated %}
           <li class="nav-item d-flex align-items-center">
-            <i class="fa fa-user me-sm-1"></i>
+            <a class="nav-link text-body font-weight-bold px-0" href="{% url 'profile' %}">
+              <i class="fa fa-user me-sm-1"></i>
               <span class="d-sm-inline d-none me-3">{{request.user.username}}</span>
+            </a>
             {% if request.user.is_superuser %}
             <a href="{% url 'admin:logout' %}" class="nav-link text-body font-weight-bold px-0">
+              <span class="d-sm-inline d-none me-3">Logout</span>
+            </a>
             {% else %}
             <a href="{% url 'logout' %}" class="nav-link text-body font-weight-bold px-0">
-              {% endif %}
                 <span class="d-sm-inline d-none me-3">Logout</span>
               </a>
+            {% endif %}
           </li>
         {% else %}
           <li class="nav-item d-flex align-items-center">
@@ -141,6 +144,7 @@
         <li class="nav-item pe-2 d-flex align-items-center">
           <label for="theme-switch" class="nav-link text-body p-0 m-0">
             <i class="fa fa-sun fixed-plugin-button-nav cursor-pointer" id="theme-indicator"></i>
+              Changer de thème
           </label>
           <input type="checkbox" class="d-none" id="theme-switch"/>
         </li>

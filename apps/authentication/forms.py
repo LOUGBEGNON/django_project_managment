@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import User
 from apps.authentication.models import User
+from apps.dashboard.models import Company
 
 
 class RegisterForm(UserCreationForm):
@@ -70,30 +71,81 @@ class RegisterForm(UserCreationForm):
         fields = ("first_name", "last_name", "email", "password1", "password2", )
 
 
-class RegistrationForm(UserCreationForm):
-  password1= forms.CharField(
-      label=_("Password"),
-      widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-  )
-  password2 = forms.CharField(
-      label=_("Password Confirmation"),
-      widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password Confirmation'}),
-  )
+class UpdateCompanyForm(forms.ModelForm):
+    social_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Company Social name",
+                "autocomplete": "name",
+            },
+        )
+    )
 
-  class Meta:
-    model = User
-    fields = ('username', 'email', )
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Company name",
+                "autocomplete": "name",
+            },
+        )
+    )
 
-    widgets = {
-      'username': forms.TextInput(attrs={
-          'class': 'form-control',
-          'placeholder': 'Username'
-      }),
-      'email': forms.EmailInput(attrs={
-          'class': 'form-control',
-          'placeholder': 'Email'
-      })
-    }
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Email",
+                "autocomplete": "email",
+                "class": "form-control",
+            }
+        )
+    )
+
+    address = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Company address",
+                "autocomplete": "address",
+            },
+        )
+    )
+
+    class Meta:
+        model = Company
+        fields = [
+            "social_name",
+            "name",
+            "email",
+            "address",
+        ]
+
+
+# class RegistrationForm(UserCreationForm):
+#   password1= forms.CharField(
+#       label=_("Password"),
+#       widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
+#   )
+#   password2 = forms.CharField(
+#       label=_("Password Confirmation"),
+#       widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password Confirmation'}),
+#   )
+#
+#   class Meta:
+#     model = User
+#     fields = ('username', 'email', )
+#
+#     widgets = {
+#       'username': forms.TextInput(attrs={
+#           'class': 'form-control',
+#           'placeholder': 'Username'
+#       }),
+#       'email': forms.EmailInput(attrs={
+#           'class': 'form-control',
+#           'placeholder': 'Email'
+#       })
+#     }
 
 
 class LoginForm(forms.Form):
@@ -128,10 +180,51 @@ class LoginForm(forms.Form):
      # widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}),
 #)
 
-class UserPasswordResetForm(PasswordResetForm):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control'
-    }))
+class UserForgotPasswordForm(PasswordResetForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Email",
+                "autocomplete": "email",
+                "class": "form-control",
+            }
+        )
+    )
+
+class UserPasswordResetForm(SetPasswordForm):
+    """Change password form."""
+
+    new_password1 = forms.CharField(
+        label="Password",
+        help_text="<ul class='errorlist text-muted'><li>Your password can 't be too similar to your other personal information.</li><li>Your password must contain at least 8 characters.</li><li>Your password can 't be a commonly used password.</li> <li>Your password can 't be entirely numeric.<li></ul>",
+        max_length=100,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "password",
+                "type": "password",
+                "id": "user_password",
+            }
+        ),
+    )
+
+    new_password2 = forms.CharField(
+        label="Confirm password",
+        help_text=False,
+        max_length=100,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "confirm password",
+                "type": "password",
+                "id": "user_password",
+            }
+        ),
+    )
+
+
 '''
 class UserSetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={

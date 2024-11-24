@@ -166,17 +166,11 @@
               </p>
               <hr class="horizontal gray-light xmy-4">
               <ul class="list-group">
-                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Author: </strong>{{ project.author.full_name }}
-                </li>
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Date:  </strong> {{ project.creation_date }}
-                 </li>
-
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Last Update: </strong> {{ project.update_date }}
-
-                </li>
-
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Status: </strong> {{ project.status }}
-                </li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Author: </strong>{{ project.author.full_name }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Responsible: </strong>{% if project.responsible %} {{ project.responsible.full_name }} {% endif %}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Date: </strong> {{ project.creation_date }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Last Update: </strong> {{ project.update_date }}</li>
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Status: </strong> {{ project.get_status }}</li>
               </ul>
             </div>
           </div>
@@ -196,16 +190,16 @@
                       <img src="{% static 'img/kal-visuals-square.jpg' %}" alt="kal" class="border-radius-lg shadow">
                     </div>
                     <div class="d-flex align-items-start flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm">{{ task.name }}</h6>
-                      <p class="mb-0 text-xs">{{ task.name }}</p>
+                      <h6 class="mb-0 text-sm">{{ task.name|truncatechars:20|safe }}</h6>
+                      <p class="mb-0 text-xs">{{ task.description|truncatechars:20|safe }}</p>
                     </div>
 
-                    {{ task.is_created }}
-                    {{ task.is_in_progress }}
-
-                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="">View</a>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="{% url 'view_task' task.id %}">View</a>
                     {% if task.is_created %}
                     <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="{% url 'start_task' task.id %}">Start</a>
+                    {% endif %}
+                    {% if task.is_paused %}
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="{% url 'start_task' task.id %}">Restart</a>
                     {% endif %}
                     {% if task.is_in_progress %}
                     <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="{% url 'pause_task' task.id %}">Pause</a>
@@ -220,6 +214,8 @@
                     <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add task</button>
                     {% include 'dashboard/modal/task_addform_modal.html' %}
                   </li>
+
+
 <!--                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">-->
 <!--                    <div class="avatar me-3">-->
 <!--                      <img src="{% static 'img/ivana-square.jpg' %}" alt="kal" class="border-radius-lg shadow">-->
@@ -261,12 +257,15 @@
                 <h6 class="mb-0">Buttons</h6>
               </div>
               <div class="card-body p-3">
-                        <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add task</button>
-                        <button type="button" class="btn btn-outline-primary btn-sm mb-0">Add project team</button>
-                        <button type="button" class="btn btn-outline-primary btn-sm mb-0">Add project team</button>
+                <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#addTaskModal">Add task</button>
+<!--                <button type="button" class="btn btn-outline-primary btn-sm mb-0">Add project team</button>-->
+<!--                <button type="button" class="btn btn-outline-primary btn-sm mb-0">Add project team</button>-->
+                <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#sendMailModal">Send Mail</button>
+                <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#updateProjectModal">Update Project</button>
               </div>
-   {% include 'dashboard/modal/task_addform_modal.html' %}
-
+                    {% include 'dashboard/modal/task_addform_modal.html' %}
+                    {% include 'dashboard/modal/send_mailform_modal.html' %}
+                    {% include 'dashboard/modal/update_projectform_modal.html' %}
             </div>
           </div>
 
@@ -284,15 +283,15 @@
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Author</th>
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Responsible</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Creation date</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Start date</th>
-                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">End date</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creation date</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Start date</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">End date</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {% for task in tasks_for_tables %}
+                {% for task in tasks %}
                   <tr>
                   <td>
                     <div class="d-flex px-2">
@@ -316,18 +315,30 @@
                     </div>
                   </td>
                   <td>
+                    {% if task.responsible %}
+                      <div class="d-flex px-2 py-1">
+                        <div>
+                          <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3" alt="user6">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">{{task.responsible.full_name}}</h6>
+                          <p class="text-xs text-secondary mb-0">{{task.responsible.email}}</p>
+                        </div>
+                      </div>
+                    {% else %}
                     <div class="d-flex px-2 py-1">
-                      <div>
-                        <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3" alt="user6">
+                        <div>
+                          <img src="{% static 'img/team-4.jpg' %}" class="avatar avatar-sm me-3" alt="user6">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm">Non assigné</h6>
+                          <p class="text-xs text-secondary mb-0">Non assigné</p>
+                        </div>
                       </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{task.responsible.full_name}}</h6>
-                        <p class="text-xs text-secondary mb-0">{{task.responsible.email}}</p>
-                      </div>
-                    </div>
+                    {% endif %}
                   </td>
                   <td>
-                    <span class="badge badge-sm {% if task.status == 'CREATED' or task.status == 'IN PROGRESS' %} bg-gradient-secondary {% elif task.status == 'COMPLETED' %} bg-gradient-success {% endif %}">{{task.status}}</span>
+                    <span class="badge badge-sm {% if task.get_status == 'CREATED' or task.get_status == 'IN PROGRESS' %} bg-gradient-secondary {% elif task.get_status == 'COMPLETED' %} bg-gradient-success {% elif task.get_status == 'PAUSED' %} bg-gradient-warning {% endif %}">{{task.get_status}}</span>
                   </td>
                   <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ task.creation_date }}</span>
@@ -338,7 +349,6 @@
                   <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ task.end_date }}</span>
                   </td>
-
                   <td>
                   <div class="float-lg-end pe-4">
                     <a class="cursor-pointer text-secondary" id="dropdownTable" data-bs-toggle="modal" aria-expanded="false">
@@ -348,7 +358,9 @@
                   </td>
                 </tr>
                 {% empty %}
-                <p>No task to show</p>
+                <div class="text-center">
+                  <p>No task to show</p>
+                </div>
                 {% endfor %}
 
 <!--                <tr>-->
@@ -525,8 +537,10 @@
 
         <div class="col-12 mt-4">
           <div>
-        {{ chart_html|safe }}
-    </div>
+            {% if chart_html %}
+            {{ chart_html|safe }}
+            {% endif %}
+          </div>
         </div>
 
 
@@ -665,10 +679,8 @@
             </div>
           </div>
         </div>-->
+         {% include 'includes/messages.html' %}
       </div>
-
-
-
     </div>
 
 {% endblock content %}

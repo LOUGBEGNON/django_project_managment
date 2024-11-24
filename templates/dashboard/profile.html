@@ -18,7 +18,7 @@
             <div class="h-100">
               <h5 class="mb-1">
                 <li class="list-group-item border-0 ps-0 pt-0 text-sm"> {{request.user.full_name}} &nbsp; </li>
-              {{request.user.role}}
+              {{request.user.get_role}}
 
 
 
@@ -174,7 +174,7 @@
                 <!-- <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Mobile:</strong> &nbsp; (44) 123 1234 123</li> -->
                 <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email: </strong> {{request.user.email}} &nbsp; </li>
                 <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Username:</strong> {{request.user.username}} &nbsp; </li> 
-                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Account type: </strong> {{request.user.role}} &nbsp; </li> 
+                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Account type: </strong> {{request.user.get_role}} &nbsp; </li>
                 <li class="nav-item d-flex align-items-center">
                   {% if request.user.is_superuser %}
                   <a href="{% url 'admin:password_change' %}" class="nav-link text-body font-weight-bold px-0">

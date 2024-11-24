@@ -1,0 +1,14 @@
+<div class="mt-4" style="width: 95%; padding-top: 40px;">
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <div class="alert-container">
+          <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
